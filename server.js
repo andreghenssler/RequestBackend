@@ -14,9 +14,10 @@ let dados = [
   { id: 2, message: 'Segunda mensagem' }
 ];
 
-
+// ✅ GET adaptado: aceita query ?id=...
 app.get('/api/data', (req, res) => {
   const { id } = req.query;
+
   if (id) {
     const item = dados.find(d => d.id == id);
     if (!item) {
@@ -24,24 +25,14 @@ app.get('/api/data', (req, res) => {
     }
     return res.status(200).json(item);
   }
+
+  // Se não passar ID, retorna todos
   res.status(200).json(dados);
 });
 
-
-app.get('/api/data/:id', (req, res) => {
-  const { id } = req.params;
-  const item = dados.find(d => d.id == id);
-  if (!item) {
-    return res.status(404).json({ error: 'ID não encontrado' });
-  }
-  return res.status(200).json(item);
-});
-
-
-
 // POST - Cria novo registro
 app.post('/api/data', (req, res) => {
-  const { message } = req.body; // Acessando corpo da requisição
+  const { message } = req.body;
   if (!message) {
     return res.status(400).json({ error: 'Campo "message" é obrigatório' });
   }
@@ -91,9 +82,8 @@ app.delete('/api/data/:id', (req, res) => {
     return res.status(404).json({ error: 'ID não encontrado' });
   }
   dados.splice(index, 1);
-  res.status(200).json({ message: 'Apagado com sucesso' });
+  res.status(204).send();
 });
-
 
 // Rota não encontrada
 app.use((req, res) => {
